@@ -2,14 +2,12 @@
 
 namespace App\Entity;
 
+use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -17,7 +15,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(unique: true)]
+    #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -32,30 +30,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100)]
     private ?string $lastName = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
-
-    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Post::class)]
-    private Collection $posts;
-
-    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class)]
-    private Collection $comments;
 
     public function __construct()
     {
-        $this->posts = new ArrayCollection();
-        $this->comments = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserIdentifier(): string
-    {
-        return (string) $this->email;
     }
 
     public function getEmail(): ?string
@@ -69,11 +54,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
     public function getRoles(): array
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
@@ -94,8 +83,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function eraseCredentials(): void
+    public function eraseCredentials(): void {}
+
+    // ===== FIRST NAME =====
+    public function getFirstName(): ?string
     {
-        // rien à faire
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): static
+    {
+        $this->firstName = $firstName;
+        return $this;
+    }
+
+    // ===== LAST NAME =====
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): static
+    {
+        $this->lastName = $lastName;
+        return $this;
     }
 }

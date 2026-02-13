@@ -2,12 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[ORM\Entity]
 class Category
 {
     #[ORM\Id]
@@ -18,6 +17,9 @@ class Category
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $description = null;
+
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Post::class)]
     private Collection $posts;
 
@@ -27,17 +29,4 @@ class Category
     }
 
     public function getId(): ?int { return $this->id; }
-
-    public function getName(): ?string { return $this->name; }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    public function getPosts(): Collection
-    {
-        return $this->posts;
-    }
 }
