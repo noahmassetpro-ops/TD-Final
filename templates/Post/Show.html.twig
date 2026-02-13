@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container mt-4">
+
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.content }}</p>
+
+    <hr>
+    <h4>Commentaires</h4>
+
+    {% for comment in post.comments %}
+        <div class="border p-2 mb-2">
+            {{ comment.content }}
+        </div>
+    {% endfor %}
+
+    {% if app.user %}
+        {{ form(form) }}
+    {% else %}
+        <p>Connectez-vous pour commenter</p>
+    {% endif %}
+
+</div>
+{% endblock %}
